@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        *{
+        margin:0;
+        padding:0;}
+        input{
+            height: 25px;
+        }
+
+        button{
+          height:25px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        #right_in{
+            margin-right: 25px;
+        }
+
+        #result div{
+            display: inline-block;
+            padding:0 15px;
+            height: 30px;
+          margin-left: 5px;
+
+            background-color: blue;
+            font-size: 20px;
+            text-align: center;
+            color: #fff;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+
+
+<input type="text" id="number">
+<button id="left_in">左侧入</button>
+<button id="right_in"  >右侧入</button>
+<button id="left_out" >左侧出</button>
+<button id="right_out"  >右侧出</button>
+<div id="result"></div>
+<script type="text/javascript">
+    function each(arr,fn){
+        for(var i =0;i<arr.length;i++){
+            fn(arr[i],i);
+        }
+
+    }
+
+    window.onload = function() {
+        var lf_in = document.getElementById("left_in");
+        var rg_in = document.getElementById("right_in");
+        var lf_out = document.getElementById("left_out");
+        var rg_out = document.getElementById("right_out");
+        var result = document.getElementById("result");
+
+
+        //定义
+        var data = {
+            str: [],
+
+            //左边插入:
+            leftPush: function (num) {
+                this.str.unshift(num);
+                this.render();
+            },
+
+            //右边插入
+            rightPush: function (num) {
+
+                this.str.push(num);
+                this.render();
+            },
+
+            isEmpty: function() {
+                return (this.str.length == 0);
+            },
+
+            //左边删除
+            leftDelete: function () {
+                if (!this.isEmpty()) {
+                    alert(this.str.shift());
+                    this.render();
+                } else {
+                    alert("队列已空！");
+                }
+
+            },
+            //右边删除
+            rightDelete: function () {
+                if (!this.isEmpty()) {
+                    alert(this.str.pop());
+                    this.render();
+                } else {
+                    alert("队列已空！");
+                }
+
+            },
+             //渲染
+            render: function () {
+                var str = "";
+                each(this.str, function (item) {
+                    str += ("<div>" + parseInt(item)+ "</div>")});
+                result.innerHTML = str;
+                addDelete();
+            },
+
+            deleteId: function (id) {
+                console.log(id);
+                this.str.splice(id, 1);
+                this.render();
+            }
+        };
+
+
+        //为每一个div绑定删除事件,用闭包，这个闭包改了两次，先开始就是犯了常犯的错误，console.log每次都是最后循环的值，逻辑要清晰
+        function addDelete() {
+            for (var i = 0; i < result.childNodes.length; i++) {
+                !function (i) {
+                    result.childNodes[i].addEventListener('click', function () {
+                            return data.deleteId(i);
+                    })
+                }(i);
+            }
+        }
+
+
+        //为按钮绑定函数
+        lf_in.addEventListener('click',function () {
+            //加入正则判断，如果不判断的话发现每次即使输入为空页面也会渲染一个NaN的div
+            var input = document.getElementById("number").value;
+            if((/^[0-9]+$/).test(input)){
+                data.leftPush(input);}
+            else{
+                alert("请输入数字！");
+
+   }
+
+        });
+
+        rg_in.addEventListener('click',function () {
+            var input = document.getElementById("number").value;
+            //加入正则判断，如果不判断的话发现每次即使输入为空页面也会渲染一个NaN的div
+            if((/^[0-9]+$/).test(input)){
+                data.rightPush(input);}
+            else{
+                alert("请输入数字！")
+            }
+
+        });
+        lf_out.addEventListener("click", function () {
+            data.leftDelete();
+        });
+
+        rg_out.addEventListener("click", function () {
+            data.rightDelete();
+        });
+
+
+    }
+</script>
+</body>
+</html>
